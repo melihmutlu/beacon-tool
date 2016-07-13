@@ -1,5 +1,6 @@
 package com.example.melih.beacon_tool;
 
+import android.bluetooth.BluetoothAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
