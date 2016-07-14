@@ -13,6 +13,7 @@ public class Beacon {
     private byte[] sr;
     private BluetoothDevice device;
     private Queue<Integer> rssiList;
+    private double x,y;
 
     public Beacon(BluetoothDevice device, byte[] sr){
         this.sr = sr;
@@ -52,4 +53,19 @@ public class Beacon {
         return tx;
     }
 
+    public void setX(double x){
+        this.x = x;
+    }
+
+    public void setY(double y){
+        this.y = y;
+    }
+
+    public double getX(){
+        return x;
+    }
+
+    public double getY(){
+        return y;
+    }
 }
