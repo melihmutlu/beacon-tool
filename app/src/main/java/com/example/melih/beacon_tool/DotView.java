@@ -17,6 +17,7 @@ public class DotView extends View implements View.OnTouchListener {
     private ArrayList<Point> pointList;
     private Point mPoint;
     private Paint paint;
+    private Beacon b;
 
     public DotView(Context context,AttributeSet attributeSet){
         super(context,attributeSet);
@@ -41,6 +42,8 @@ public class DotView extends View implements View.OnTouchListener {
                 Point mPoint = new Point();
                 mPoint.x = (int)event.getX();
                 mPoint.y = (int)event.getY();
+                b.setX(mPoint.x);
+                b.setY(mPoint.y);
                 pointList.add(mPoint);
         }
         return true;
@@ -52,5 +55,9 @@ public class DotView extends View implements View.OnTouchListener {
 
     public float getY(){
         return mPoint.y;
+    }
+
+    public void setBeacon(Beacon b){
+        this.b = b ;
     }
 }
