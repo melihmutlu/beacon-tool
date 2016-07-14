@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this , /* Activity Name */);
+                Intent i = new Intent(MainActivity.this , GraphActivity.class);
                 // put extras
                 startActivity(i);
             }
@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this , /* Activity Name */);
+                //Intent i = new Intent(MainActivity.this , /* Activity Name */);
                 // put extras
-                startActivity(i);
+                //startActivity(i);
             }
         });
     }

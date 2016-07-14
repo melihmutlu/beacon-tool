@@ -12,7 +12,6 @@ import android.util.Log;
 public class LeScanner extends AppCompatActivity{
 
     private BluetoothAdapter adapter;
-    private BluetoothLeScanner leScanner;
 
     protected void startScan(){
         adapter = BluetoothAdapter.getDefaultAdapter();
@@ -31,6 +30,4 @@ public class LeScanner extends AppCompatActivity{
             }
         });
     }
-
-
 }
