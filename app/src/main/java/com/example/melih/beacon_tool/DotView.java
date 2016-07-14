@@ -44,6 +44,7 @@ public class DotView extends View implements View.OnTouchListener {
                 mPoint.y = (int)event.getY();
                 b.setX(mPoint.x);
                 b.setY(mPoint.y);
+                pointList.clear(); // draw one  dot only !!
                 pointList.add(mPoint);
         }
         return true;
