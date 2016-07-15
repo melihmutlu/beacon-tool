@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Melih on 13.7.2016.
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 public class LeScanner extends AppCompatActivity{
 
     protected static ArrayList<Beacon> beaconList;
+    private Set<BluetoothEventListener> listeners;
     private BluetoothAdapter adapter;
     protected Beacon nearestBeacon;
 
@@ -41,6 +43,14 @@ public class LeScanner extends AppCompatActivity{
 
     protected Beacon getNeaerest(){
         return nearestBeacon;
+    }
+
+    public void addListener(BluetoothEventListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeListener(BluetoothEventListener listener) {
+        this.listeners.remove(listener);
     }
 
 }
