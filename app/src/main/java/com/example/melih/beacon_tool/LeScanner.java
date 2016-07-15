@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Melih on 13.7.2016.
@@ -15,6 +16,7 @@ import java.util.Map;
 public class LeScanner extends AppCompatActivity{
 
     protected static Map<String, Beacon> beaconList;
+    private Set<BluetoothEventListener> listeners;
     private BluetoothAdapter adapter;
     protected Beacon nearestBeacon;
 
@@ -53,13 +55,21 @@ public class LeScanner extends AppCompatActivity{
 
     public static List<Beacon> getBeaconsByAddress(List<String> beaconAddress) {
 
-        if(beaconAddress == null || beaconAddress.isEmpty()) return null;
+        if (beaconAddress == null || beaconAddress.isEmpty()) return null;
 
         List<Beacon> beacons = new LinkedList<>();
-        for(String key : beaconAddress){
+        for (String key : beaconAddress) {
             beacons.add(LeScanner.beaconList.get(key));
         }
         return beacons;
+    }
+
+    public void addListener(BluetoothEventListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeListener(BluetoothEventListener listener) {
+        this.listeners.remove(listener);
     }
 
 }
