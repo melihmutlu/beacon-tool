@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.Set;
 public class LeScanner extends AppCompatActivity{
 
     protected static Map<String, Beacon> beaconList;
-    private Set<BluetoothEventListener> listeners;
+    private Set<BluetoothEventListener> listeners = new HashSet<BluetoothEventListener>();
     private BluetoothAdapter adapter;
     protected Beacon nearestBeacon;
 
@@ -42,7 +43,10 @@ public class LeScanner extends AppCompatActivity{
                         }else if(rssi > nearestBeacon.getRssi().peek()) {
                             nearestBeacon = b;
                         }
-                        beaconList.put(b.getAddress(), b);
+                        beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
+                        for(BluetoothEventListener l : listeners){
+                            l.onUpdate(b);
+                        }
                     }
                 });
             }
