@@ -32,6 +32,16 @@ public class DotView extends View implements View.OnTouchListener {
         for(Point p: pointList){
             canvas.drawCircle(p.x, p.y, 15, paint);
         }
+
+        if (LeScanner.beaconList != null && !LeScanner.beaconList.isEmpty()) {
+            paint.setColor(Color.RED);
+            for(Beacon b : LeScanner.beaconList.values()){
+                canvas.drawCircle((float) b.getX(), (float) b.getY(), 15, paint);
+            }
+        } else {
+            paint.setColor(Color.RED);
+            canvas.drawText("no beacon", 10, 10, paint);
+        }
         invalidate();
     }
 
@@ -46,6 +56,7 @@ public class DotView extends View implements View.OnTouchListener {
                 b.setY(mPoint.y);
                 pointList.clear(); // draw one  dot only !!
                 pointList.add(mPoint);
+                invalidate();
         }
         return true;
     }

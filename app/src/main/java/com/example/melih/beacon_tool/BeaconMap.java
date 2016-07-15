@@ -28,7 +28,7 @@ public class BeaconMap extends LeScanner {
             @Override
             public void onClick(View v) {
                 dotView.setOnTouchListener(dotView);
-                b = getNeaerest();
+                b = getNearest();
                 textView.setText(b.getAddress());
                 dotView.setBeacon(b);
             }
