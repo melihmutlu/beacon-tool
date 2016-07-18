@@ -4,7 +4,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,8 @@ import java.util.Set;
 public class LeScanner extends AppCompatActivity{
 
     protected static Map<String, Beacon> beaconList;
-    private Set<BluetoothEventListener> listeners;
+    private static Set<BluetoothEventListener> listeners = new HashSet<>();
+    public static Map<BluetoothEventListener, Integer> listenerStack = new HashMap<>();
     private BluetoothAdapter adapter;
     protected Beacon nearestBeacon;
 
@@ -42,15 +45,17 @@ public class LeScanner extends AppCompatActivity{
                         }else if(rssi > nearestBeacon.getRssi().peek()) {
                             nearestBeacon = b;
                         }
-                        beaconList.put(b.getAddress(), b);
-                        GraphActivity.updateView();
+                        beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
+                        for (BluetoothEventListener l : listeners) {
+                            l.onUpdate(b);
+                        }
                     }
                 });
             }
         });
     }
 
-    protected Beacon getNeaerest(){
+    protected Beacon getNearest(){
         return nearestBeacon;
     }
 
@@ -65,12 +70,14 @@ public class LeScanner extends AppCompatActivity{
         return beacons;
     }
 
-    public void addListener(BluetoothEventListener listener) {
-        this.listeners.add(listener);
+    public static void addListener(BluetoothEventListener listener) {
+        listeners.add(listener);
+        listenerStack.put(listener, 0);
     }
 
-    public void removeListener(BluetoothEventListener listener) {
-        this.listeners.remove(listener);
+    public static void removeListener(BluetoothEventListener listener) {
+        listeners.remove(listener);
+        listenerStack.remove(listener);
     }
 
 }

@@ -8,8 +8,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/map"
         android:layout_centerVertical="true"
-        android:paddingBottom="10dp"
         android:layout_margin="10dp"
-        android:src="@drawable/level11_map"/>
+        android:src="@drawable/level11_map"
+        android:adjustViewBounds="true"/>
 
 </RelativeLayout>

@@ -9,9 +9,11 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by alper on 11/07/16.
@@ -21,11 +23,9 @@ public class MapView extends ImageView {
     private Canvas C = null;
     Context context;
     private Paint mPaint;
-    private double absWidth = 460;
-    private double absHeigth = 460;
     private List<Point> dots;
 
-    private Map<Point, Double> beaconList;
+    private Set<Beacon> beaconList;
 
     public MapView(Context context) {
         this(context, null);
@@ -38,7 +38,7 @@ public class MapView extends ImageView {
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
 
-        beaconList = new HashMap<>();
+        beaconList = new HashSet<>();
         dots = new LinkedList<>();
     }
 
@@ -51,25 +51,29 @@ public class MapView extends ImageView {
         super.onDraw(canvas);
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0,0,460,460,mPaint);
-        for (Point t : beaconList.keySet()) {
+        canvas.drawRect(0,0,this.getWidth(),this.getHeight(),mPaint);
+        int a = 1;
+        for (Beacon b : beaconList) {
+            mPaint.setColor(Color.MAGENTA);
+            canvas.drawText("x: " + b.getX() + ", y: " + b.getY(),30,10*a,mPaint);
+            a++;
             mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
             mPaint.setColor(Color.CYAN);
-            canvas.drawCircle((float) t.x*30, (float) t.y*30, 10, mPaint);
+            canvas.drawCircle((float) b.getX(), (float) b.getY(), 10, mPaint);
 
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setColor(Color.RED);
-            canvas.drawCircle((float) t.x*30, (float) t.y*30, (float) beaconList.get(t).doubleValue()*30, mPaint);
+            canvas.drawCircle((float) b.getX(), (float) b.getY(), (float) (b.getAverageDistance() * LocationActivity.scaleConstant), mPaint);
         }
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.RED);
         mPaint.setAlpha(20);
         for (Point t : dots) {
-            canvas.drawCircle((float) t.x*30, (float) t.y*30, 5, mPaint);
+            canvas.drawCircle((float) t.x, (float) t.y, 5, mPaint);
         }
     }
 
-    public void setBeaconList(Map<Point, Double> m) {
+    public void setBeaconList(Set<Beacon> m) {
         beaconList = m;
         invalidate();
     }

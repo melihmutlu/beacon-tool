@@ -14,29 +14,33 @@ import java.util.ArrayList;
 
 public class DotView extends View implements View.OnTouchListener {
 
-    private ArrayList<Point> pointList;
     private Point mPoint;
     private Paint paint;
     private Beacon b;
+    private float coefficient;
 
     public DotView(Context context,AttributeSet attributeSet){
         super(context,attributeSet);
-        pointList = new ArrayList<>();
         paint = new Paint();
+        coefficient = 1;
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         paint.setColor(Color.GREEN);
-        for(Point p: pointList){
-            canvas.drawCircle(p.x, p.y, 15, paint);
+        if (b != null) {
+            canvas.drawCircle((float) b.getX(), (float) b.getY(), 15, paint);
         }
 
         if (LeScanner.beaconList != null && !LeScanner.beaconList.isEmpty()) {
             paint.setColor(Color.RED);
+            int a = 1;
             for(Beacon b : LeScanner.beaconList.values()){
-                canvas.drawCircle((float) b.getX(), (float) b.getY(), 15, paint);
+                canvas.drawCircle((float) b.getX()*coefficient , (float) b.getY()*coefficient, 15, paint);
+                canvas.drawText(b.getAddress(),30,10*a,paint);
+                a++;
             }
         } else {
             paint.setColor(Color.RED);
@@ -54,8 +58,7 @@ public class DotView extends View implements View.OnTouchListener {
                 mPoint.y = (int)event.getY();
                 b.setX(mPoint.x);
                 b.setY(mPoint.y);
-                pointList.clear(); // draw one  dot only !!
-                pointList.add(mPoint);
+
                 invalidate();
         }
         return true;
