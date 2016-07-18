@@ -17,13 +17,10 @@ public class DotView extends View implements View.OnTouchListener {
     private Point mPoint;
     private Paint paint;
     private Beacon b;
-    private float coefficient;
 
     public DotView(Context context,AttributeSet attributeSet){
         super(context,attributeSet);
         paint = new Paint();
-        coefficient = 1;
-
     }
 
     @Override
@@ -38,7 +35,7 @@ public class DotView extends View implements View.OnTouchListener {
             paint.setColor(Color.RED);
             int a = 1;
             for(Beacon b : LeScanner.beaconList.values()){
-                canvas.drawCircle((float) b.getX()*coefficient , (float) b.getY()*coefficient, 15, paint);
+                canvas.drawCircle((float) b.getX(), (float) b.getY(), 15, paint);
                 canvas.drawText(b.getAddress(),30,10*a,paint);
                 a++;
             }

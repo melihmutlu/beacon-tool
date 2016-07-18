@@ -13,8 +13,8 @@ import java.util.Set;
  */
 public class LocationActivity extends LeScanner implements BluetoothEventListener{
 
-    public static final int ROLLOUT = 1000;
-    private static Point point;
+    public static final int NUMBER_OF_ROLLOUTS = 1000;
+    private static Point currentPoint;
     private Set<Beacon> beaconSet = new HashSet<>();
     private MapView map;
     public static double scaleConstant = 1;
@@ -24,9 +24,12 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loc_layout);
 
-        point = new Point();
-        point.set(300,300);
+        currentPoint = new Point();
+        currentPoint.set(300,300);
         map = (MapView) findViewById(R.id.map);
+
+        // EGENİN TELEFONUNA GÖRE
+        // bunu nasıl ayarlayacağımı bulamadım, getWidth() 0 döndürüyordu.
         scaleConstant = 3800 / 31;
 
         LeScanner.addListener(this);
@@ -56,18 +59,18 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         double avgY = 0;
         List<Point> dotList = new LinkedList<Point>();
 
-        for(int j=0; j<ROLLOUT; j++) {
+        for(int j=0; j<NUMBER_OF_ROLLOUTS; j++) {
             Point temp = new Point();
-            MathHelper.mhRollout(beaconSet, point);
-            temp.set(point.x, point.y);
+            MathHelper.mhRollout(beaconSet, currentPoint);
+            temp.set(currentPoint.x, currentPoint.y);
             dotList.add(temp);
             avgX = avgX + temp.x;
             avgY = avgY + temp.y;
         }
         map.setDots(dotList);
 
-        point.x = (int) (avgX / ROLLOUT);
-        point.y = (int) (avgY / ROLLOUT);
+        currentPoint.x = (int) (avgX / NUMBER_OF_ROLLOUTS);
+        currentPoint.y = (int) (avgY / NUMBER_OF_ROLLOUTS);
 
     }
 
