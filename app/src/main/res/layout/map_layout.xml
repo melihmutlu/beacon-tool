@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scanBtn"
+        android:text="SCAN"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/beaconName"
+        android:layout_toRightOf="@id/scanBtn"
+        android:textSize="25dp"
+        android:padding="3dp"
+        android:layout_margin="15dp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scanBtn">
+
+        <ImageView
+           android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           android:src="@drawable/level11_map"
+           android:layout_margin="10dp"
+            android:adjustViewBounds="true"/>
+
+        <com.example.melih.beacon_tool.DotView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dotView"
+            android:adjustViewBounds="true"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

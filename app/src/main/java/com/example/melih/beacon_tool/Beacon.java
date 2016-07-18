@@ -1,7 +1,6 @@
 package com.example.melih.beacon_tool;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.ScanRecord;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,11 +10,12 @@ import java.util.Queue;
  */
 public class Beacon {
 
-    private ScanRecord sr;
+    private byte[] sr;
     private BluetoothDevice device;
     private Queue<Integer> rssiList;
+    private double x,y;
 
-    public Beacon(BluetoothDevice device, ScanRecord sr){
+    public Beacon(BluetoothDevice device, byte[] sr){
         this.sr = sr;
         this.device = device;
         rssiList = new LinkedList<>();
@@ -23,10 +23,6 @@ public class Beacon {
 
     public String getAddress(){
         return device.getAddress();
-    }
-
-    public int getTxLevel(){
-        return sr.getTxPowerLevel();
     }
 
     public String getName(){
@@ -47,10 +43,9 @@ public class Beacon {
     }
 
     public int getTx(){
-        byte[] b = sr.getBytes();
         int tx = -1;
         try{
-            String temp = String.format("%02x ", b[29]);
+            String temp = String.format("%02x ", sr[29]);
             tx = -(256 - Integer.parseInt(temp.substring(0,temp.length()-1),16));
         }catch (NullPointerException e){
            e.printStackTrace();
@@ -58,4 +53,29 @@ public class Beacon {
         return tx;
     }
 
+    public void setX(double x){
+        this.x = x;
+    }
+
+    public void setY(double y){
+        this.y = y;
+    }
+
+    public double getX(){
+        return x;
+    }
+
+    public double getY(){
+        return y;
+    }
+
+    public double getAverageDistance() {
+        double mean = 0;
+        for (int i : this.rssiList) {
+            mean = mean + i;
+
+        }
+        mean = mean / rssiList.size();
+        return MathHelper.getDistance(this.getTx(), mean);
+    }
 }
