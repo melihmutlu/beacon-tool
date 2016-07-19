@@ -45,8 +45,10 @@ public class LeScanner extends AppCompatActivity{
                             nearestBeacon = b;
                         }
                         beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
-                        for (BluetoothEventListener l : listeners) {
-                            l.onUpdate(b);
+                        if(beaconList.containsKey(b.getAddress())) {
+                            for (BluetoothEventListener l : listeners) {
+                                l.onUpdate(b);
+                            }
                         }
                     }
                 });
