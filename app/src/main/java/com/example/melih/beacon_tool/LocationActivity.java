@@ -2,6 +2,7 @@ package com.example.melih.beacon_tool;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,9 +28,9 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         currentPoint = new Point();
         currentPoint.set(300,300);
         map = (MapView) findViewById(R.id.map);
-
         // EGENİN TELEFONUNA GÖRE = bilmiyorum, ALPERİN TELEFONUNA GÖRE = 510, İGALİN NOTE 3 = 680, BİLGE = 1020
         // bunu nasıl ayarlayacağımı bulamadım, getWidth() 0 döndürüyordu.
+        // level 11 = 31 metre
         scaleConstant = 510 / 31;
 
         LeScanner.addListener(this);
