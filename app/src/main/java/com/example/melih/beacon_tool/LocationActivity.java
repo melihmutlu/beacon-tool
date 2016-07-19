@@ -28,9 +28,9 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         currentPoint.set(300,300);
         map = (MapView) findViewById(R.id.map);
 
-        // EGENİN TELEFONUNA GÖRE
+        // EGENİN TELEFONUNA GÖRE = bilmiyorum, ALPERİN TELEFONUNA GÖRE = 510, İGALİN NOTE 3 = 680, BİLGE = 1020
         // bunu nasıl ayarlayacağımı bulamadım, getWidth() 0 döndürüyordu.
-        scaleConstant = 3800 / 31;
+        scaleConstant = 510 / 31;
 
         LeScanner.addListener(this);
     }
