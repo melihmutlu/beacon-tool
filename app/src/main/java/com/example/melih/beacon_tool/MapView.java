@@ -51,7 +51,7 @@ public class MapView extends ImageView {
         super.onDraw(canvas);
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0,0,510,510,mPaint);
+        canvas.drawRect(0,0,1360,1360,mPaint);
         int a = 1;
         for (Beacon b : beaconList) {
             mPaint.setColor(Color.MAGENTA);
@@ -63,7 +63,7 @@ public class MapView extends ImageView {
 
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setColor(Color.RED);
-            canvas.drawCircle((float) b.getX(), (float) b.getY(), (float) (b.getAverageDistance() * LocationActivity.scaleConstant), mPaint);
+            canvas.drawCircle((float) b.getX(), (float) b.getY(), (float) (b.getAverageDistance() * LocationActivity.getScaleConstant()), mPaint);
         }
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.RED);
