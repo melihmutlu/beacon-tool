@@ -22,6 +22,7 @@
         <activity android:name=".BeaconMap"/>
         <activity android:name=".LeScanner"/>
         <activity android:name=".GraphActivity"/>
+        <activity android:name=".LocationActivity"/>
     </application>
 
 </manifest>

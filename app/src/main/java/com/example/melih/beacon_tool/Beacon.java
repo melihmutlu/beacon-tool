@@ -68,4 +68,14 @@ public class Beacon {
     public double getY(){
         return y;
     }
+
+    public double getAverageDistance() {
+        double mean = 0;
+        for (int i : this.rssiList) {
+            mean = mean + i;
+
+        }
+        mean = mean / rssiList.size();
+        return MathHelper.getDistance(this.getTx(), mean);
+    }
 }

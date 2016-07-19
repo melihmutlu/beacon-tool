@@ -17,7 +17,7 @@ import java.util.Set;
 public class LeScanner extends AppCompatActivity{
 
     protected static Map<String, Beacon> beaconList;
-    private Set<BluetoothEventListener> listeners = new HashSet<BluetoothEventListener>();
+    private static Set<BluetoothEventListener> listeners = new HashSet<>();
     private BluetoothAdapter adapter;
     protected Beacon nearestBeacon;
 
@@ -44,7 +44,7 @@ public class LeScanner extends AppCompatActivity{
                             nearestBeacon = b;
                         }
                         beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
-                        for(BluetoothEventListener l : listeners){
+                        for (BluetoothEventListener l : listeners) {
                             l.onUpdate(b);
                         }
                     }
@@ -68,12 +68,12 @@ public class LeScanner extends AppCompatActivity{
         return beacons;
     }
 
-    public void addListener(BluetoothEventListener listener) {
-        this.listeners.add(listener);
+    public static void addListener(BluetoothEventListener listener) {
+        listeners.add(listener);
     }
 
-    public void removeListener(BluetoothEventListener listener) {
-        this.listeners.remove(listener);
+    public static void removeListener(BluetoothEventListener listener) {
+        listeners.remove(listener);
     }
 
 }
