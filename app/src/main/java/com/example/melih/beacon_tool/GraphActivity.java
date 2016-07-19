@@ -1,6 +1,7 @@
 package com.example.melih.beacon_tool;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,12 +38,13 @@ public class GraphActivity extends LeScanner implements BluetoothEventListener {
         spinner = (Spinner) findViewById(R.id.spinner);
 
         graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMinY(40);
+        graph.getViewport().setMinY(20);
         graph.getViewport().setMaxY(100);
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                adapter = new ArrayAdapter(GraphActivity.this, R.layout.support_simple_spinner_dropdown_item, beaconList.keySet().toArray());
+                spinner.setAdapter(adapter);
                 mBeacon = beaconList.get(parent.getItemAtPosition(position));
                 isSelected = true;
             }
@@ -58,20 +60,24 @@ public class GraphActivity extends LeScanner implements BluetoothEventListener {
     @Override
     public void onUpdate(Beacon b) {
         dataPoints = new ArrayList<>();
-        adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, beaconList.keySet().toArray());
-        spinner.setAdapter(adapter);
         Queue<Integer> graphValues ;
-        if(isSelected && b.getAddress() == mBeacon.getAddress()){
-            graphValues = b.getRssi();
-            for(Integer i : graphValues) {
-                dataPoints.add(new DataPoint(time, -1*i));
-                time++;
+        if(isSelected){
+            if(b.getAddress().equals("C1:F8:CB:2B:90:4A")){
+                graphValues = b.getRssi();
+                for(Integer i : graphValues) {
+                    dataPoints.add(new DataPoint(time, -1*i));
+                    time++;
+                }
+                DataPoint[] arr = Arrays.copyOf(dataPoints.toArray(), dataPoints.toArray().length, DataPoint[].class);
+                LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(arr);
+                graph.removeAllSeries();
+                graph.addSeries(series);
+                dataPoints.clear();
             }
-            DataPoint[] arr = Arrays.copyOf(dataPoints.toArray(), dataPoints.toArray().length, DataPoint[].class);
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(arr);
-            graph.removeAllSeries();
-            graph.addSeries(series);
-            dataPoints.clear();
+        }else{
+            adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, beaconList.keySet().toArray());
+            spinner.setAdapter(adapter);
+            Log.d("TEST" , "spinner");
         }
     }
 
