@@ -51,7 +51,7 @@ public class MapView extends ImageView {
         super.onDraw(canvas);
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0,0,this.getWidth(),this.getHeight(),mPaint);
+        canvas.drawRect(0,0,510,510,mPaint);
         int a = 1;
         for (Beacon b : beaconList) {
             mPaint.setColor(Color.MAGENTA);
