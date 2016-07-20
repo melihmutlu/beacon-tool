@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:weightSum="1">
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="10dp">
 
-    <com.example.melih.beacon_tool.GraphView
+    <Spinner
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/graph"/>
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:id="@+id/graph"
+        android:layout_below="@+id/spinner"
+        android:layout_marginTop="5dp"/>
+
+</RelativeLayout>

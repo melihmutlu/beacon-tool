@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,10 +61,10 @@ public class LeScanner extends AppCompatActivity{
 
     public static List<Beacon> getBeaconsByAddress(List<String> beaconAddress) {
 
-        if(beaconAddress == null || beaconAddress.isEmpty()) return null;
+        if (beaconAddress == null || beaconAddress.isEmpty()) return null;
 
         List<Beacon> beacons = new LinkedList<>();
-        for(String key : beaconAddress){
+        for (String key : beaconAddress) {
             beacons.add(LeScanner.beaconList.get(key));
         }
         return beacons;
