@@ -78,4 +78,5 @@ public class Beacon {
         mean = mean / rssiList.size();
         return MathHelper.getDistance(this.getTx(), mean);
     }
+
 }

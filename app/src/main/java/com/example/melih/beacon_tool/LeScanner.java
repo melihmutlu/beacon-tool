@@ -17,9 +17,19 @@ import java.util.Set;
  */
 public class LeScanner extends AppCompatActivity{
 
+    private class Signal{
+        public Beacon beacon;
+        public long time;
+        public Signal(Beacon beacon, long time ){
+            this.beacon = beacon ;
+            this.time = time ;
+        }
+    }
+
+
     protected static Map<String, Beacon> beaconList;
     private static Set<BluetoothEventListener> listeners = new HashSet<>();
-    private static Queue<Beacon> lastBeacons = new LinkedList<>();
+    private static Queue<Signal> lastBeacons = new LinkedList<>();
     private static Set<String> validBeacons = new HashSet<>();
     private BluetoothAdapter adapter;
     private static Set<String> currentConfig = new HashSet<>();
@@ -59,14 +69,11 @@ public class LeScanner extends AppCompatActivity{
                             for (BluetoothEventListener l : listeners) {
                                 l.onUpdate(b);
                             }
-                            if (lastBeacons.size() < 15) {
-                                lastBeacons.add(b);
-                                setValidBeacons();
-                            } else {
+                            lastBeacons.add(new Signal(b,System.currentTimeMillis()));
+                            while (lastBeacons.peek().time < System.currentTimeMillis()-750){
                                 lastBeacons.poll();
-                                lastBeacons.add(b);
-                                setValidBeacons();
                             }
+                            setValidBeacons();
                         }
                     }
                 });
@@ -97,14 +104,14 @@ public class LeScanner extends AppCompatActivity{
         listeners.remove(listener);
     }
 
-    public static Queue<Beacon> getLastBeacons() {
+    public static Queue<Signal> getLastBeacons() {
         return lastBeacons;
     }
 
     public static void setValidBeacons() {
         validBeacons.clear();
-        for(Beacon b : lastBeacons) {
-            validBeacons.add(b.getAddress());
+        for(Signal s : lastBeacons) {
+            validBeacons.add(s.beacon.getAddress());
         }
     }
 
