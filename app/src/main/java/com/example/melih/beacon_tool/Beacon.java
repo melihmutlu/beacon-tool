@@ -30,7 +30,7 @@ public class Beacon {
     }
 
     public void addRssi(int rssi){
-        if(rssiList.size() == 10){
+        if(rssiList.size() == 5){
             rssiList.poll();
             rssiList.add(rssi);
         }else{
@@ -78,4 +78,5 @@ public class Beacon {
         mean = mean / rssiList.size();
         return MathHelper.getDistance(this.getTx(), mean);
     }
+
 }

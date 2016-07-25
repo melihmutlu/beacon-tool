@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -16,13 +17,33 @@ import java.util.Set;
  */
 public class LeScanner extends AppCompatActivity{
 
+    private class Signal{
+        public Beacon beacon;
+        public long time;
+        public Signal(Beacon beacon, long time ){
+            this.beacon = beacon ;
+            this.time = time ;
+        }
+    }
+
+
     protected static Map<String, Beacon> beaconList;
     private static Set<BluetoothEventListener> listeners = new HashSet<>();
+    private static Queue<Signal> lastBeacons = new LinkedList<>();
+    private static Set<String> validBeacons = new HashSet<>();
     private BluetoothAdapter adapter;
+    private static Set<String> currentConfig = new HashSet<>();
+
     protected Beacon nearestBeacon;
 
     protected void startScan(){
         beaconList = new HashMap<>();
+        // level 11 beacons
+        currentConfig.add("D0:30:AD:84:07:40");
+        currentConfig.add("E0:2E:E2:ED:86:64");
+        currentConfig.add("FC:73:08:31:50:42");
+        currentConfig.add("D6:31:D4:6D:42:DF");
+
         adapter = BluetoothAdapter.getDefaultAdapter();
         adapter.startLeScan(new BluetoothAdapter.LeScanCallback() {
             @Override
@@ -44,8 +65,15 @@ public class LeScanner extends AppCompatActivity{
                             nearestBeacon = b;
                         }
                         beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
-                        for (BluetoothEventListener l : listeners) {
-                            l.onUpdate(b);
+                        if(currentConfig.contains(b.getAddress())) {
+                            for (BluetoothEventListener l : listeners) {
+                                l.onUpdate(b);
+                            }
+                            lastBeacons.add(new Signal(b,System.currentTimeMillis()));
+                            while (lastBeacons.size() != 1 && (lastBeacons.peek().time < System.currentTimeMillis()-750)){
+                                lastBeacons.poll();
+                            }
+                            setValidBeacons();
                         }
                     }
                 });
@@ -76,4 +104,18 @@ public class LeScanner extends AppCompatActivity{
         listeners.remove(listener);
     }
 
+    public static Queue<Signal> getLastBeacons() {
+        return lastBeacons;
+    }
+
+    public static void setValidBeacons() {
+        validBeacons.clear();
+        for(Signal s : lastBeacons) {
+            validBeacons.add(s.beacon.getAddress());
+        }
+    }
+
+    public static Set<String> getValidBeacons() {
+        return validBeacons;
+    }
 }
