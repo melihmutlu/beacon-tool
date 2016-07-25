@@ -70,7 +70,7 @@ public class LeScanner extends AppCompatActivity{
                                 l.onUpdate(b);
                             }
                             lastBeacons.add(new Signal(b,System.currentTimeMillis()));
-                            while (lastBeacons.size() != 1 && (lastBeacons.peek().time < System.currentTimeMillis()-750)){
+                            while (lastBeacons.size() != 1 && (lastBeacons.peek().time < System.currentTimeMillis()-3000)){
                                 lastBeacons.poll();
                             }
                             setValidBeacons();

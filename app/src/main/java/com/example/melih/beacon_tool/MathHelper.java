@@ -5,6 +5,8 @@ import android.graphics.Point;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import java.util.Set;
  */
 public class MathHelper {
 
+    private static Random r = new Random();
     public static NormalDistribution Z = new NormalDistribution(null,0, 1);
 
     public static String lol(){
@@ -32,24 +35,21 @@ public class MathHelper {
         double pr_new = 1;
         double pr_old = 1;
 
-        Random r = new Random();
-        double x = prior.x/LocationActivity.getScaleConstant() + r.nextGaussian();
-        double y = prior.y/LocationActivity.getScaleConstant() + r.nextGaussian();
+        double x = prior.x/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
+        double y = prior.y/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
 
         for(Beacon b : beaconSet){
-            double d_new = Math.sqrt(Math.pow(b.getX()/LocationActivity.getScaleConstant() - x,2) + Math.pow(b.getY()/LocationActivity.getScaleConstant() - y,2));
-            double d = b.getAverageDistance();
-            pr_new = pr_new * Z.cumulativeProbability(d-d_new);
+            if(b != null) {
+                double d_new = Math.sqrt(Math.pow(b.getX() / LocationActivity.getScaleConstant() - x, 2) + Math.pow(b.getY() / LocationActivity.getScaleConstant() - y, 2));
+                double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y) / LocationActivity.getScaleConstant(), 2));
+                double d = b.getAverageDistance();
+
+                pr_new = pr_new * Z.cumulativeProbability(d - d_new);
+                pr_old = pr_old * Z.cumulativeProbability(d - d_old);
+            }
         }
 
-        for(Beacon b : beaconSet){
-            double d_old = Math.sqrt(Math.pow((b.getX() - prior.x)/LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y)/LocationActivity.getScaleConstant(),2));
-            double d = b.getAverageDistance();
-            pr_old = pr_old * Z.cumulativeProbability(d-d_old);
-        }
-
-        Random r2 = new Random();
-        double a = r2.nextDouble();
+        double a = r.nextDouble();
 
         if ( a < (pr_new / pr_old)) {
             prior.x = (int) (x * LocationActivity.getScaleConstant());
@@ -57,5 +57,47 @@ public class MathHelper {
         }
 
         return prior;
+    }
+
+    protected static List<Point> filterOut(Set<Beacon> beaconSet, List<Point> particleList) {
+
+
+        List<Point> filtered = new LinkedList<>();
+
+        double proposed_likelihood = 1;
+        double prior_likelihood = 1;
+
+        for(Point p : particleList) {
+
+            double theta = getRandomAngle();
+            double rho = r.nextDouble();
+            double x = p.x/LocationActivity.getScaleConstant() + 0.5 * rho * Math.cos(theta);
+            double y = p.y/LocationActivity.getScaleConstant() + 0.5 * rho * Math.sin(theta);
+
+            for(Beacon b : beaconSet) {
+                if(b != null) {
+                    double d_new = Math.sqrt(Math.pow(b.getX() / LocationActivity.getScaleConstant() - x, 2) + Math.pow(b.getY() / LocationActivity.getScaleConstant() - y, 2));
+                    double d_old = Math.sqrt(Math.pow((b.getX() - p.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - p.y) / LocationActivity.getScaleConstant(), 2));
+                    double d = b.getAverageDistance();
+
+                    proposed_likelihood = proposed_likelihood * Z.cumulativeProbability(d_new - d);
+                    prior_likelihood = prior_likelihood * Z.cumulativeProbability(d_old - d);
+                }
+            }
+
+            double a = r.nextDouble();
+
+            if ( a < (proposed_likelihood / prior_likelihood)) {
+                filtered.add(new Point((int) (x * LocationActivity.getScaleConstant()), (int) (y * LocationActivity.getScaleConstant())));
+            }
+
+        }
+        return filtered;
+    }
+
+    public static double getRandomAngle() {
+
+        return r.nextDouble() * 2 * Math.PI;
+
     }
 }
