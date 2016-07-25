@@ -33,17 +33,17 @@ public class MathHelper {
         double pr_old = 1;
 
         Random r = new Random();
-        double x = prior.x/LocationActivity.scaleConstant + r.nextGaussian();
-        double y = prior.y/LocationActivity.scaleConstant + r.nextGaussian();
+        double x = prior.x/LocationActivity.getScaleConstant() + r.nextGaussian();
+        double y = prior.y/LocationActivity.getScaleConstant() + r.nextGaussian();
 
         for(Beacon b : beaconSet){
-            double d_new = Math.sqrt(Math.pow(b.getX()/LocationActivity.scaleConstant - x,2) + Math.pow(b.getY()/LocationActivity.scaleConstant - y,2));
+            double d_new = Math.sqrt(Math.pow(b.getX()/LocationActivity.getScaleConstant() - x,2) + Math.pow(b.getY()/LocationActivity.getScaleConstant() - y,2));
             double d = b.getAverageDistance();
             pr_new = pr_new * Z.cumulativeProbability(d-d_new);
         }
 
         for(Beacon b : beaconSet){
-            double d_old = Math.sqrt(Math.pow((b.getX() - prior.x)/LocationActivity.scaleConstant, 2) + Math.pow((b.getY() - prior.y)/LocationActivity.scaleConstant,2));
+            double d_old = Math.sqrt(Math.pow((b.getX() - prior.x)/LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y)/LocationActivity.getScaleConstant(),2));
             double d = b.getAverageDistance();
             pr_old = pr_old * Z.cumulativeProbability(d-d_old);
         }
@@ -52,8 +52,8 @@ public class MathHelper {
         double a = r2.nextDouble();
 
         if ( a < (pr_new / pr_old)) {
-            prior.x = (int) (x * LocationActivity.scaleConstant);
-            prior.y = (int) (y * LocationActivity.scaleConstant);
+            prior.x = (int) (x * LocationActivity.getScaleConstant());
+            prior.y = (int) (y * LocationActivity.getScaleConstant());
         }
 
         return prior;
