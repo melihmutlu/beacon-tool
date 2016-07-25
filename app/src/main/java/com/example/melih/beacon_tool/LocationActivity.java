@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class LocationActivity extends LeScanner implements BluetoothEventListener{
 
-    private static final int NUMBER_OF_ROLLOUTS = 100;
+    private static final int NUMBER_OF_ROLLOUTS = 1000;
     private static Point currentPoint;
     private static MapView map;
     private static Set<Beacon> beaconSet = new HashSet<>();
