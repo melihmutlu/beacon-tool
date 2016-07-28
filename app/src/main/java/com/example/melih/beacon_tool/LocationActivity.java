@@ -110,7 +110,7 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         beaconSet.clear();
 
         for(String s : m){
-            if(nearThree.contains(s)) {
+            if(chosenBeacons.contains(s)) {
                 beaconSet.add(beaconList.get(s));
             }
         }

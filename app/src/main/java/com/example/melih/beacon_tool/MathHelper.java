@@ -2,6 +2,7 @@ package com.example.melih.beacon_tool;
 
 
 import android.graphics.Point;
+import android.util.Log;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
@@ -32,8 +33,11 @@ public class MathHelper {
     // with respect to prior point and beacon set.
     protected static Point mhRollout(Set<Beacon> beaconSet, Point prior){
 
-        double pr_new = 1;
-        double pr_old = 1;
+        // 1 for normal calculations
+        // 0 for logarithm-based calculations
+
+        double pr_new = 0;
+        double pr_old = 0;
 
         double x = prior.x/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
         double y = prior.y/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
@@ -44,14 +48,30 @@ public class MathHelper {
                 double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y) / LocationActivity.getScaleConstant(), 2));
                 double d = b.getAverageDistance();
 
-                pr_new = pr_new * Z.cumulativeProbability(d - d_new);
-                pr_old = pr_old * Z.cumulativeProbability(d - d_old);
+                // normal calculations
+                //////////////////////
+//                pr_new = pr_new * Z.cumulativeProbability(d - d_new);
+//                pr_old = pr_old * Z.cumulativeProbability(d - d_old);
+
+                double v = Math.log10(Z.cumulativeProbability(d - d_new));
+                Log.d("INFO", "p: " + v);
+
+                // logarithm-based calculation
+                //////////////////////
+                pr_new = pr_new + Math.log10(Z.cumulativeProbability(d - d_new));
+                pr_old = pr_old + Math.log10(Z.cumulativeProbability(d - d_old));
             }
         }
 
         double a = r.nextDouble();
 
-        if ( a < (pr_new / pr_old)) {
+        // normal calculations
+        // (pr_new / pr_old)
+        //////////////////////
+        // logarithm-based calculations
+        // Math.pow(10, pr_new - pr_old)
+
+        if ( a < Math.pow(10d, pr_new - pr_old)) {
             prior.x = (int) (x * LocationActivity.getScaleConstant());
             prior.y = (int) (y * LocationActivity.getScaleConstant());
         }
@@ -63,6 +83,9 @@ public class MathHelper {
 
 
         List<Point> filtered = new LinkedList<>();
+
+        // 1 for normal calculations
+        // 0 for logarithm-based calculations
 
         double proposed_likelihood = 1;
         double prior_likelihood = 1;
@@ -80,8 +103,16 @@ public class MathHelper {
                     double d_old = Math.sqrt(Math.pow((b.getX() - p.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - p.y) / LocationActivity.getScaleConstant(), 2));
                     double d = b.getAverageDistance();
 
+                    // normal calculations
+                    //////////////////////
                     proposed_likelihood = proposed_likelihood * Z.cumulativeProbability(d_new - d);
                     prior_likelihood = prior_likelihood * Z.cumulativeProbability(d_old - d);
+
+                    // logarithm-based calculation
+                    //////////////////////
+//                    proposed_likelihood = proposed_likelihood + Math.log(Z.cumulativeProbability(d_new-d));
+//                    prior_likelihood = prior_likelihood + Math.log(Z.cumulativeProbability(d_old-d));
+
                 }
             }
 
