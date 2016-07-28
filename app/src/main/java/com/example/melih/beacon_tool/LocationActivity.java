@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class LocationActivity extends LeScanner implements BluetoothEventListener{
 
-    private static final int NUMBER_OF_ROLLOUTS = 500;
+    private static final int NUMBER_OF_ROLLOUTS = 300;
     private static Point currentPoint;
     private static List<Point> particles;
     private static MapView map;
@@ -33,8 +33,9 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         // EGENİN TELEFONUNA GÖRE = 1360, ALPERİN TELEFONUNA GÖRE = 510, İGALİN NOTE 3 = 680, BİLGE = 1020
         // bunu nasıl ayarlayacağımı bulamadım, getWidth() 0 döndürüyordu.
         // level 11 = 31 metre
+        // thy = 106 metre
         // car park = 100 metre
-        scaleConstant = 1360 / 31;
+        scaleConstant = 680 / 31;
 
         LeScanner.addListener(this);
     }
@@ -105,18 +106,13 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
 
     private void updateBeaconSet() {
 
-        /*/
-        beaconSet.clear();
-        for(Beacon i : LeScanner.beaconList.values()){
-            if(i.getY() != 0.0 && i.getX() !=0.0) {
-                beaconSet.add(i);
-            }
-        }
-        //*/
         Set<String> m = LeScanner.getValidBeacons();
         beaconSet.clear();
+
         for(String s : m){
-            beaconSet.add(beaconList.get(s));
+            if(nearThree.contains(s)) {
+                beaconSet.add(beaconList.get(s));
+            }
         }
         map.setBeaconList(beaconSet);
 
