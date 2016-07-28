@@ -54,6 +54,7 @@ public class DotView extends View implements View.OnTouchListener {
                 mPoint.y = (int)event.getY();
                 b.setX(mPoint.x);
                 b.setY(mPoint.y);
+                LeScanner.currentConfig.add(b.getAddress());
 
                 invalidate();
         }
