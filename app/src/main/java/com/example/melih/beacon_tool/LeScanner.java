@@ -4,11 +4,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -32,17 +34,18 @@ public class LeScanner extends AppCompatActivity{
     private static Queue<Signal> lastBeacons = new LinkedList<>();
     private static Set<String> validBeacons = new HashSet<>();
     private BluetoothAdapter adapter;
-    private static Set<String> currentConfig = new HashSet<>();
+    public static Set<String> currentConfig = new HashSet<>();
+    public static ArrayList<String> nearThree = new ArrayList<>();
 
     protected Beacon nearestBeacon;
 
     protected void startScan(){
         beaconList = new HashMap<>();
         // level 11 beacons
-        currentConfig.add("D0:30:AD:84:07:40");
-        currentConfig.add("E0:2E:E2:ED:86:64");
-        currentConfig.add("FC:73:08:31:50:42");
-        currentConfig.add("D6:31:D4:6D:42:DF");
+        //currentConfig.add("D0:30:AD:84:07:40");
+        //currentConfig.add("E0:2E:E2:ED:86:64");
+        //currentConfig.add("FC:73:08:31:50:42");
+        //currentConfig.add("D6:31:D4:6D:42:DF");
 
         adapter = BluetoothAdapter.getDefaultAdapter();
         adapter.startLeScan(new BluetoothAdapter.LeScanCallback() {
@@ -66,11 +69,29 @@ public class LeScanner extends AppCompatActivity{
                         }
                         beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
                         if(currentConfig.contains(b.getAddress())) {
+
+                            if(nearThree.size()<5 ) {
+                                nearThree.add(b.getAddress());
+                            } else {
+                                String max = nearThree.get(0);
+                                int index = 0;
+                                for (String s : nearThree) {
+                                    if (beaconList.get(s).getAverageDistance() > beaconList.get(max).getAverageDistance()) {
+                                        max = s;
+                                    }
+                                }
+                                if (b.getAverageDistance() < beaconList.get(max).getAverageDistance() && !nearThree.contains(b.getAddress())){
+                                    nearThree.remove(nearThree.indexOf(max));
+                                    nearThree.add(b.getAddress());
+                                }
+                            }
+
+
                             for (BluetoothEventListener l : listeners) {
                                 l.onUpdate(b);
                             }
                             lastBeacons.add(new Signal(b,System.currentTimeMillis()));
-                            while (lastBeacons.size() != 1 && (lastBeacons.peek().time < System.currentTimeMillis()-750)){
+                            while (lastBeacons.size() != 1 && (lastBeacons.peek().time < System.currentTimeMillis()-1000)){
                                 lastBeacons.poll();
                             }
                             setValidBeacons();

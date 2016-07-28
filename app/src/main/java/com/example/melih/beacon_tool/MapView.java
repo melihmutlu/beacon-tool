@@ -51,19 +51,21 @@ public class MapView extends ImageView {
         super.onDraw(canvas);
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0,0,1360,1360,mPaint);
+        canvas.drawRect(0,0,680,680,mPaint);
         int a = 1;
         for (Beacon b : beaconList) {
-            mPaint.setColor(Color.MAGENTA);
-            canvas.drawText("x: " + b.getX() + ", y: " + b.getY(),30,10*a,mPaint);
-            a++;
-            mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-            mPaint.setColor(Color.CYAN);
-            canvas.drawCircle((float) b.getX(), (float) b.getY(), 10, mPaint);
+            if (b != null) {
+                mPaint.setColor(Color.MAGENTA);
+                canvas.drawText("x: " + b.getX() + ", y: " + b.getY(), 30, 10 * a, mPaint);
+                a++;
+                mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                mPaint.setColor(Color.CYAN);
+                canvas.drawCircle((float) b.getX(), (float) b.getY(), 10, mPaint);
 
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setColor(Color.RED);
-            canvas.drawCircle((float) b.getX(), (float) b.getY(), (float) (b.getAverageDistance() * LocationActivity.getScaleConstant()), mPaint);
+                mPaint.setStyle(Paint.Style.STROKE);
+                mPaint.setColor(Color.RED);
+                canvas.drawCircle((float) b.getX(), (float) b.getY(), (float) (b.getAverageDistance() * LocationActivity.getScaleConstant()), mPaint);
+            }
         }
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.RED);
