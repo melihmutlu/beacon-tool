@@ -6,6 +6,7 @@ import android.util.Log;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,37 +87,44 @@ public class MathHelper {
 
         double scaleConstant = LocationActivity.getScaleConstant();
         List<Point> filtered = new LinkedList<>();
-        Map<Point, Double> weights = new HashMap<>();
-
-        double proposed_likelihood = 0;
+        ArrayList<WeightedPoint> weights = new ArrayList<>();
 
         for(Point p : particleList) {
 
+            double proposed_likelihood = 1;
             double theta = getRandomAngle();
             double rho = r.nextDouble();
 
             // transform polar coordinates to euclidean coordinates
 
-            double x = p.x/scaleConstant + 0.5 * rho * Math.cos(theta);
-            double y = p.y/scaleConstant + 0.5 * rho * Math.sin(theta);
+            double x = p.x/scaleConstant + 0.3 * rho * Math.cos(theta);
+            double y = p.y/scaleConstant + 0.3 * rho * Math.sin(theta);
 
             for(Beacon b : beaconSet) {
                 if(b != null) {
-
                     double d_new = Math.sqrt(Math.pow(b.getX() / scaleConstant - x, 2) + Math.pow(b.getY() / scaleConstant - y, 2));
                     double d = b.getAverageDistance();
-                    proposed_likelihood = proposed_likelihood + Math.log(Z.cumulativeProbability(d_new-d));
-
-                    Point m = new Point((int) (x * scaleConstant),(int) (y * scaleConstant));
-                    weights.put(m, proposed_likelihood);
-
+//                    proposed_likelihood = proposed_likelihood + Math.log(Z.cumulativeProbability(d_new-d));
+                    proposed_likelihood = proposed_likelihood * Z.cumulativeProbability(d_new - d);
                 }
             }
-
-            weights = normaliseWeights(weights);
-
-
+            Point m = new Point((int) (x * scaleConstant),(int) (y * scaleConstant));
+            weights.add(new WeightedPoint(m, proposed_likelihood));
         }
+
+        weights = normaliseWeights(weights);
+
+        for(int i=0; i<weights.size(); i++) {
+            double a = r.nextDouble();
+            double it = 0;
+            int pos = -1;
+            while(it < a) {
+                pos++;
+                it = it + weights.get(pos).getWeight();
+            }
+            filtered.add(weights.get(pos).getPoint());
+        }
+
         return filtered;
     }
 
@@ -128,17 +136,19 @@ public class MathHelper {
 
     }
 
-    public static Map<Point, Double> normaliseWeights(Map<Point, Double> m) {
+    public static ArrayList<WeightedPoint> normaliseWeights(ArrayList<WeightedPoint> m) {
 
         double Z = 0;
-        Map<Point, Double> normalisedMap = new HashMap<>();
+        ArrayList<WeightedPoint> normalisedMap = new ArrayList<>();
 
-        for(Double d : m.values()){
-            Z = Z + d;
+        for(WeightedPoint d : m){
+            Z = Z + d.getWeight();
         }
-        for(Point e : m.keySet()) {
-            double normalisedWeight = m.get(e) / Z;
-            normalisedMap.put(e, normalisedWeight);
+
+        for(WeightedPoint e : m) {
+            double normalisedWeight = e.getWeight() / Z;
+            WeightedPoint p = new WeightedPoint(e.getPoint(), normalisedWeight);
+            normalisedMap.add(p);
         }
 
         return normalisedMap;
