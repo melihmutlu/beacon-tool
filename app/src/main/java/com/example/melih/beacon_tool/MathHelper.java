@@ -2,11 +2,15 @@ package com.example.melih.beacon_tool;
 
 
 import android.graphics.Point;
+import android.util.Log;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -18,9 +22,9 @@ public class MathHelper {
     private static Random r = new Random();
     public static NormalDistribution Z = new NormalDistribution(null,0, 1);
 
-    public static String lol(){
-        return "Hello World!";
-    }
+    // return distance estimation with respect to
+    // calibration value tx and measured rssi, with
+    // n = 2, path loss exponent.
 
     public static double getDistance(int tx, double rssi) {
         double n = 2;
@@ -32,28 +36,52 @@ public class MathHelper {
     // with respect to prior point and beacon set.
     protected static Point mhRollout(Set<Beacon> beaconSet, Point prior){
 
-        double pr_new = 1;
-        double pr_old = 1;
+        // 1 for normal calculations
+        // 0 for logarithm-based calculations
 
-        double x = prior.x/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
-        double y = prior.y/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
+        double scaleConstant = LocationActivity.getScaleConstant();
+        double pr_new = 0;
+        double pr_old = 0;
+
+        double x = prior.x/scaleConstant + r.nextGaussian() * 0.5;
+        double y = prior.y/scaleConstant + r.nextGaussian() * 0.5;
 
         for(Beacon b : beaconSet){
             if(b != null) {
-                double d_new = Math.sqrt(Math.pow(b.getX() / LocationActivity.getScaleConstant() - x, 2) + Math.pow(b.getY() / LocationActivity.getScaleConstant() - y, 2));
-                double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y) / LocationActivity.getScaleConstant(), 2));
+                double d_new = Math.sqrt(Math.pow(b.getX() / scaleConstant - x, 2) + Math.pow(b.getY() / scaleConstant - y, 2));
+                double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / scaleConstant, 2) + Math.pow((b.getY() - prior.y) / scaleConstant, 2));
                 double d = b.getAverageDistance();
 
-                pr_new = pr_new * Z.cumulativeProbability(d - d_new);
-                pr_old = pr_old * Z.cumulativeProbability(d - d_old);
+                // normal calculations
+                //////////////////////
+//                pr_new = pr_new * Z.cumulativeProbability(d - d_new);
+//                pr_old = pr_old * Z.cumulativeProbability(d - d_old);
+
+//                double v = Math.log10(2*Z.cumulativeProbability(-Math.abs(d - d_new)));
+//                Log.d("INFO", "p: " + v);
+
+                // logarithm-based calculation
+                //////////////////////
+//                pr_new = pr_new + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_new)));
+//                pr_old = pr_old + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_old)));
+//
+                pr_new = pr_new + Math.log10(Z.cumulativeProbability(d - d_new));
+                pr_old = pr_old + Math.log10(Z.cumulativeProbability(d - d_old));
+
             }
         }
 
         double a = r.nextDouble();
 
-        if ( a < (pr_new / pr_old)) {
-            prior.x = (int) (x * LocationActivity.getScaleConstant());
-            prior.y = (int) (y * LocationActivity.getScaleConstant());
+        // normal calculations
+        // (pr_new / pr_old)
+        //////////////////////
+        // logarithm-based calculations
+        // Math.pow(10, pr_new - pr_old)
+
+        if ( a < Math.pow(10d, pr_new - pr_old)) {
+            prior.x = (int) (x * scaleConstant);
+            prior.y = (int) (y * scaleConstant);
         }
 
         return prior;
@@ -61,43 +89,75 @@ public class MathHelper {
 
     protected static List<Point> filterOut(Set<Beacon> beaconSet, List<Point> particleList) {
 
-
+        double scaleConstant = LocationActivity.getScaleConstant();
         List<Point> filtered = new LinkedList<>();
-
-        double proposed_likelihood = 1;
-        double prior_likelihood = 1;
+        ArrayList<WeightedPoint> weights = new ArrayList<>();
 
         for(Point p : particleList) {
 
+            double proposed_likelihood = 1;
             double theta = getRandomAngle();
             double rho = r.nextDouble();
-            double x = p.x/LocationActivity.getScaleConstant() + 0.5 * rho * Math.cos(theta);
-            double y = p.y/LocationActivity.getScaleConstant() + 0.5 * rho * Math.sin(theta);
+
+            // transform polar coordinates to euclidean coordinates
+
+            double x = p.x/scaleConstant + 0.3 * rho * Math.cos(theta);
+            double y = p.y/scaleConstant + 0.3 * rho * Math.sin(theta);
+
+            // calculate likelihood
 
             for(Beacon b : beaconSet) {
                 if(b != null) {
-                    double d_new = Math.sqrt(Math.pow(b.getX() / LocationActivity.getScaleConstant() - x, 2) + Math.pow(b.getY() / LocationActivity.getScaleConstant() - y, 2));
-                    double d_old = Math.sqrt(Math.pow((b.getX() - p.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - p.y) / LocationActivity.getScaleConstant(), 2));
+                    double d_new = Math.sqrt(Math.pow(b.getX() / scaleConstant - x, 2) + Math.pow(b.getY() / scaleConstant - y, 2));
                     double d = b.getAverageDistance();
-
-                    proposed_likelihood = proposed_likelihood * Z.cumulativeProbability(d_new - d);
-                    prior_likelihood = prior_likelihood * Z.cumulativeProbability(d_old - d);
+                    proposed_likelihood = proposed_likelihood * 2 * Z.cumulativeProbability(-Math.abs(d_new - d));
                 }
             }
-
-            double a = r.nextDouble();
-
-            if ( a < (proposed_likelihood / prior_likelihood)) {
-                filtered.add(new Point((int) (x * LocationActivity.getScaleConstant()), (int) (y * LocationActivity.getScaleConstant())));
-            }
-
+            Point m = new Point((int) (x * scaleConstant),(int) (y * scaleConstant));
+            weights.add(new WeightedPoint(m, proposed_likelihood));
         }
+
+        weights = normaliseWeights(weights);
+
+        // Resampling procedure
+
+        for(int i=0; i<weights.size(); i++) {
+            double a = r.nextDouble();
+            double it = 0;
+            int pos = -1;
+            while(it < a) {
+                pos++;
+                it = it + weights.get(pos).getWeight();
+            }
+            filtered.add(weights.get(pos).getPoint());
+        }
+
         return filtered;
     }
+
+    // return a random angle in [0, 2*pi]
 
     public static double getRandomAngle() {
 
         return r.nextDouble() * 2 * Math.PI;
 
+    }
+
+    public static ArrayList<WeightedPoint> normaliseWeights(ArrayList<WeightedPoint> m) {
+
+        double Z = 0;
+        ArrayList<WeightedPoint> normalisedMap = new ArrayList<>();
+
+        for(WeightedPoint d : m){
+            Z = Z + d.getWeight();
+        }
+
+        for(WeightedPoint e : m) {
+            double normalisedWeight = e.getWeight() / Z;
+            WeightedPoint p = new WeightedPoint(e.getPoint(), normalisedWeight);
+            normalisedMap.add(p);
+        }
+
+        return normalisedMap;
     }
 }
