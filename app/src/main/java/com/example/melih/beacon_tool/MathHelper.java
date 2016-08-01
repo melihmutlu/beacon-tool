@@ -57,13 +57,17 @@ public class MathHelper {
 //                pr_new = pr_new * Z.cumulativeProbability(d - d_new);
 //                pr_old = pr_old * Z.cumulativeProbability(d - d_old);
 
-                double v = Math.log10(Z.cumulativeProbability(d - d_new));
-                Log.d("INFO", "p: " + v);
+//                double v = Math.log10(2*Z.cumulativeProbability(-Math.abs(d - d_new)));
+//                Log.d("INFO", "p: " + v);
 
                 // logarithm-based calculation
                 //////////////////////
+//                pr_new = pr_new + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_new)));
+//                pr_old = pr_old + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_old)));
+
                 pr_new = pr_new + Math.log10(Z.cumulativeProbability(d - d_new));
                 pr_old = pr_old + Math.log10(Z.cumulativeProbability(d - d_old));
+
             }
         }
 
@@ -105,7 +109,10 @@ public class MathHelper {
                     double d_new = Math.sqrt(Math.pow(b.getX() / scaleConstant - x, 2) + Math.pow(b.getY() / scaleConstant - y, 2));
                     double d = b.getAverageDistance();
 //                    proposed_likelihood = proposed_likelihood + Math.log(Z.cumulativeProbability(d_new-d));
-                    proposed_likelihood = proposed_likelihood * Z.cumulativeProbability(d_new - d);
+                    proposed_likelihood = proposed_likelihood * 2 * Z.cumulativeProbability(-Math.abs(d_new - d));
+
+//                    Log.d("INFO", "pr1: " + Z.cumulativeProbability(d_new-d) + ", pr2: " + Z.cumulativeProbability(d-d_new) + ", d: " + d + ", d_new: " + d_new);
+
                 }
             }
             Point m = new Point((int) (x * scaleConstant),(int) (y * scaleConstant));

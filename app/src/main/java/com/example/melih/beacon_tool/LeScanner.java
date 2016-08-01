@@ -71,7 +71,7 @@ public class LeScanner extends AppCompatActivity{
 
                         if(currentConfig.contains(b.getAddress())) {
 
-                            if(chosenBeacons.size()<5 ) {
+                            if(chosenBeacons.size()<3 ) {
                                 b.clearRssiList();
                                 b.addRssi(rssi);
                                 beaconList.put(b.getAddress(), b);
