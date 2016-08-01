@@ -64,7 +64,7 @@ public class MathHelper {
                 //////////////////////
 //                pr_new = pr_new + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_new)));
 //                pr_old = pr_old + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_old)));
-
+//
                 pr_new = pr_new + Math.log10(Z.cumulativeProbability(d - d_new));
                 pr_old = pr_old + Math.log10(Z.cumulativeProbability(d - d_old));
 
@@ -104,15 +104,13 @@ public class MathHelper {
             double x = p.x/scaleConstant + 0.3 * rho * Math.cos(theta);
             double y = p.y/scaleConstant + 0.3 * rho * Math.sin(theta);
 
+            // calculate likelihood
+
             for(Beacon b : beaconSet) {
                 if(b != null) {
                     double d_new = Math.sqrt(Math.pow(b.getX() / scaleConstant - x, 2) + Math.pow(b.getY() / scaleConstant - y, 2));
                     double d = b.getAverageDistance();
-//                    proposed_likelihood = proposed_likelihood + Math.log(Z.cumulativeProbability(d_new-d));
                     proposed_likelihood = proposed_likelihood * 2 * Z.cumulativeProbability(-Math.abs(d_new - d));
-
-//                    Log.d("INFO", "pr1: " + Z.cumulativeProbability(d_new-d) + ", pr2: " + Z.cumulativeProbability(d-d_new) + ", d: " + d + ", d_new: " + d_new);
-
                 }
             }
             Point m = new Point((int) (x * scaleConstant),(int) (y * scaleConstant));
@@ -120,6 +118,8 @@ public class MathHelper {
         }
 
         weights = normaliseWeights(weights);
+
+        // Resampling procedure
 
         for(int i=0; i<weights.size(); i++) {
             double a = r.nextDouble();
