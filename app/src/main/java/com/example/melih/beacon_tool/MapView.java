@@ -8,11 +8,9 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,8 +22,8 @@ public class MapView extends ImageView {
     Context context;
     private Paint mPaint;
     private List<Point> dots;
-
     private Set<Beacon> beaconList;
+    private static double scaleConstant = 1;
 
     public MapView(Context context) {
         this(context, null);
@@ -37,7 +35,7 @@ public class MapView extends ImageView {
         mPaint = new Paint();
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
-
+        scaleConstant = this.getWidth() / 31;
         beaconList = new HashSet<>();
         dots = new LinkedList<>();
     }
@@ -51,20 +49,20 @@ public class MapView extends ImageView {
         super.onDraw(canvas);
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0,0,680,680,mPaint);
+        canvas.drawRect(0,0,getWidth(),getHeight(),mPaint);
         int a = 1;
         for (Beacon b : beaconList) {
             if (b != null) {
                 mPaint.setColor(Color.MAGENTA);
-                canvas.drawText("x: " + b.getX() + ", y: " + b.getY(), 30, 10 * a, mPaint);
+                canvas.drawText("x: " + b.getX()*getWidth() + ", y: " + b.getY()*getHeight(), 30, 10 * a, mPaint);
                 a++;
                 mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
                 mPaint.setColor(Color.CYAN);
-                canvas.drawCircle((float) b.getX(), (float) b.getY(), 10, mPaint);
+                canvas.drawCircle((float) b.getX()*getWidth(), (float) b.getY()*getHeight(), 10, mPaint);
 
                 mPaint.setStyle(Paint.Style.STROKE);
                 mPaint.setColor(Color.RED);
-                canvas.drawCircle((float) b.getX(), (float) b.getY(), (float) (b.getAverageDistance() * LocationActivity.getScaleConstant()), mPaint);
+                canvas.drawCircle((float) b.getX()*getWidth(), (float) b.getY()*getHeight(), (float) (b.getAverageDistance() * getScaleConstant()), mPaint);
             }
         }
         mPaint.setStyle(Paint.Style.FILL);
@@ -83,5 +81,9 @@ public class MapView extends ImageView {
     public void setDots(List<Point> dots) {
         this.dots = dots;
         invalidate();
+    }
+
+    public static double getScaleConstant() {
+        return scaleConstant;
     }
 }

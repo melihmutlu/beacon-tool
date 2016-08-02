@@ -35,13 +35,13 @@ public class MathHelper {
         double pr_new = 1;
         double pr_old = 1;
 
-        double x = prior.x/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
-        double y = prior.y/LocationActivity.getScaleConstant() + r.nextGaussian() * 0.5;
+        double x = prior.x/MapView.getScaleConstant() + r.nextGaussian() * 0.5;
+        double y = prior.y/MapView.getScaleConstant() + r.nextGaussian() * 0.5;
 
         for(Beacon b : beaconSet){
             if(b != null) {
-                double d_new = Math.sqrt(Math.pow(b.getX() / LocationActivity.getScaleConstant() - x, 2) + Math.pow(b.getY() / LocationActivity.getScaleConstant() - y, 2));
-                double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y) / LocationActivity.getScaleConstant(), 2));
+                double d_new = Math.sqrt(Math.pow(b.getX() / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY() / MapView.getScaleConstant() - y, 2));
+                double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / MapView.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y) / MapView.getScaleConstant(), 2));
                 double d = b.getAverageDistance();
 
                 pr_new = pr_new * Z.cumulativeProbability(d - d_new);
@@ -52,8 +52,8 @@ public class MathHelper {
         double a = r.nextDouble();
 
         if ( a < (pr_new / pr_old)) {
-            prior.x = (int) (x * LocationActivity.getScaleConstant());
-            prior.y = (int) (y * LocationActivity.getScaleConstant());
+            prior.x = (int) (x * MapView.getScaleConstant());
+            prior.y = (int) (y * MapView.getScaleConstant());
         }
 
         return prior;
@@ -71,13 +71,13 @@ public class MathHelper {
 
             double theta = getRandomAngle();
             double rho = r.nextDouble();
-            double x = p.x/LocationActivity.getScaleConstant() + 0.5 * rho * Math.cos(theta);
-            double y = p.y/LocationActivity.getScaleConstant() + 0.5 * rho * Math.sin(theta);
+            double x = p.x/MapView.getScaleConstant() + 0.5 * rho * Math.cos(theta);
+            double y = p.y/MapView.getScaleConstant() + 0.5 * rho * Math.sin(theta);
 
             for(Beacon b : beaconSet) {
                 if(b != null) {
-                    double d_new = Math.sqrt(Math.pow(b.getX() / LocationActivity.getScaleConstant() - x, 2) + Math.pow(b.getY() / LocationActivity.getScaleConstant() - y, 2));
-                    double d_old = Math.sqrt(Math.pow((b.getX() - p.x) / LocationActivity.getScaleConstant(), 2) + Math.pow((b.getY() - p.y) / LocationActivity.getScaleConstant(), 2));
+                    double d_new = Math.sqrt(Math.pow(b.getX() / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY() / MapView.getScaleConstant() - y, 2));
+                    double d_old = Math.sqrt(Math.pow((b.getX() - p.x) / MapView.getScaleConstant(), 2) + Math.pow((b.getY() - p.y) / MapView.getScaleConstant(), 2));
                     double d = b.getAverageDistance();
 
                     proposed_likelihood = proposed_likelihood * Z.cumulativeProbability(d_new - d);
@@ -88,7 +88,7 @@ public class MathHelper {
             double a = r.nextDouble();
 
             if ( a < (proposed_likelihood / prior_likelihood)) {
-                filtered.add(new Point((int) (x * LocationActivity.getScaleConstant()), (int) (y * LocationActivity.getScaleConstant())));
+                filtered.add(new Point((int) (x * MapView.getScaleConstant()), (int) (y * MapView.getScaleConstant())));
             }
 
         }

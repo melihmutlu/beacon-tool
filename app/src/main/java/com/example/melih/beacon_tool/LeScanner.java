@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -36,6 +35,7 @@ public class LeScanner extends AppCompatActivity{
     private BluetoothAdapter adapter;
     public static Set<String> currentConfig = new HashSet<>();
     public static ArrayList<String> nearThree = new ArrayList<>();
+    private static int mFloor = 12;
 
     protected Beacon nearestBeacon;
 
@@ -60,14 +60,14 @@ public class LeScanner extends AppCompatActivity{
                             b = beaconList.get(device.getAddress());
                         } else {
                             b = new Beacon(device, scanRecord);
+                            beaconList.put(b.getAddress(), b);
                         }
                         b.addRssi(rssi);
-                        if(nearestBeacon == null){
-                            nearestBeacon = b;
-                        }else if(rssi > nearestBeacon.getRssi().peek()) {
-                            nearestBeacon = b;
+
+                        if(b.getFloor() == mFloor){
+                            currentConfig.add(b.getAddress());
                         }
-                        beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
+
                         if(currentConfig.contains(b.getAddress())) {
 
                             if(nearThree.size()<5 ) {
@@ -139,4 +139,5 @@ public class LeScanner extends AppCompatActivity{
     public static Set<String> getValidBeacons() {
         return validBeacons;
     }
+
 }
