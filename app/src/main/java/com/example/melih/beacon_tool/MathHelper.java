@@ -2,6 +2,7 @@ package com.example.melih.beacon_tool;
 
 
 import android.graphics.Point;
+import android.util.Log;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
@@ -34,6 +35,8 @@ public class MathHelper {
 
         double pr_new = 1;
         double pr_old = 1;
+
+        Log.d("TEST" , "" + MapView.getScaleConstant());
 
         double x = prior.x/MapView.getScaleConstant() + r.nextGaussian() * 0.5;
         double y = prior.y/MapView.getScaleConstant() + r.nextGaussian() * 0.5;

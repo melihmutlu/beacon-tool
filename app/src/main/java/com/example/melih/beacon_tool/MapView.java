@@ -35,7 +35,6 @@ public class MapView extends ImageView {
         mPaint = new Paint();
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
-        scaleConstant = this.getWidth() / 31;
         beaconList = new HashSet<>();
         dots = new LinkedList<>();
     }
@@ -47,6 +46,7 @@ public class MapView extends ImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        scaleConstant = this.getWidth() / 31;
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(0,0,getWidth(),getHeight(),mPaint);
