@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BeaconMap"/>
         <activity android:name=".LeScanner"/>
         <activity android:name=".GraphActivity"/>
         <activity android:name=".LocationActivity"/>
