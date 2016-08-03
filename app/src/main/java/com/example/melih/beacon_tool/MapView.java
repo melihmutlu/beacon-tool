@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.util.HashSet;
@@ -24,6 +25,7 @@ public class MapView extends ImageView {
     private List<Point> dots;
     private Set<Beacon> beaconList;
     private static double scaleConstant = 1;
+    public static int width , height;
 
     public MapView(Context context) {
         this(context, null);
@@ -47,6 +49,9 @@ public class MapView extends ImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         scaleConstant = this.getWidth() / 31;
+        width = getWidth();
+        height = getHeight();
+        Log.d("TEST" , width + " : " + height);
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(0,0,getWidth(),getHeight(),mPaint);

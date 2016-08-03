@@ -43,8 +43,8 @@ public class MathHelper {
 
         for(Beacon b : beaconSet){
             if(b != null) {
-                double d_new = Math.sqrt(Math.pow(b.getX() / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY() / MapView.getScaleConstant() - y, 2));
-                double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / MapView.getScaleConstant(), 2) + Math.pow((b.getY() - prior.y) / MapView.getScaleConstant(), 2));
+                double d_new = Math.sqrt(Math.pow(b.getX()*MapView.width / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY()*MapView.height / MapView.getScaleConstant() - y, 2));
+                double d_old = Math.sqrt(Math.pow((b.getX()*MapView.width - prior.x) / MapView.getScaleConstant(), 2) + Math.pow((b.getY()*MapView.height  - prior.y) / MapView.getScaleConstant(), 2));
                 double d = b.getAverageDistance();
 
                 pr_new = pr_new * Z.cumulativeProbability(d - d_new);
