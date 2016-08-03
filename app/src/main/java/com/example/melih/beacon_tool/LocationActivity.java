@@ -50,7 +50,7 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
     public void onUpdate(Beacon beacon) {
         updateBeaconSet();
         getEstimation();
-        //getEstimationByFilter();
+//        getEstimationByFilter();
     }
 
     private List<Point> getEstimation() {
@@ -88,13 +88,8 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
             particles = getEstimation();
         }
 
-        while(particles.size() < 250) {
-            particles.addAll(particles);
-        }
-
         particles = MathHelper.filterOut(beaconSet,particles);
         map.setDots(particles);
-
 
     }
 
@@ -104,7 +99,9 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         beaconSet.clear();
 
         for(String s : m){
-            beaconSet.add(beaconList.get(s));
+            if(chosenBeacons.contains(s)) {
+                beaconSet.add(beaconList.get(s));
+            }
         }
         map.setBeaconList(beaconSet);
 

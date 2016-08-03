@@ -117,4 +117,7 @@ public class Beacon {
 
     }
 
+    public void clearRssiList() {
+        rssiList.clear();
+    }
 }
