@@ -49,8 +49,8 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
     @Override
     public void onUpdate(Beacon beacon) {
         updateBeaconSet();
-        getEstimation();
-//        getEstimationByFilter();
+//        getEstimation();
+        getEstimationByFilter();
     }
 
     private List<Point> getEstimation() {

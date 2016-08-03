@@ -77,7 +77,7 @@ public class MathHelper {
         // logarithm-based calculations
         // Math.pow(10, pr_new - pr_old)
 
-        if (a < (pr_new / pr_old)) {
+        if (a < Math.pow(10, pr_new - pr_old)) {
             prior.x = (int) (x * MapView.getScaleConstant());
             prior.y = (int) (y * MapView.getScaleConstant());
         }
@@ -101,7 +101,7 @@ public class MathHelper {
 
             for(Beacon b : beaconSet) {
                 if(b != null) {
-                    double d_new = Math.sqrt(Math.pow(b.getX() / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY() / MapView.getScaleConstant() - y, 2));
+                    double d_new = Math.sqrt(Math.pow(b.getX()* MapView.width / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY()*MapView.height / MapView.getScaleConstant() - y, 2));
                     double d = b.getAverageDistance();
                     proposed_likelihood = proposed_likelihood * 2 * Z.cumulativeProbability(-Math.abs(d_new - d));
                 }
