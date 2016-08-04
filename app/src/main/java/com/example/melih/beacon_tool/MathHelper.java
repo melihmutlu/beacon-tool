@@ -2,15 +2,12 @@ package com.example.melih.beacon_tool;
 
 
 import android.graphics.Point;
-import android.util.Log;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -34,22 +31,23 @@ public class MathHelper {
 
     // return a new point by Metropolis-Hastings algorithm
     // with respect to prior point and beacon set.
-    protected static Point mhRollout(Set<Beacon> beaconSet, Point prior){
+    protected static Point mhRollout(Set<Beacon> beaconSet, Point prior) {
 
         // 1 for normal calculations
         // 0 for logarithm-based calculations
 
-        double scaleConstant = LocationActivity.getScaleConstant();
+        double scaleConstant = MapView.getScaleConstant();
         double pr_new = 0;
         double pr_old = 0;
 
-        double x = prior.x/scaleConstant + r.nextGaussian() * 0.5;
-        double y = prior.y/scaleConstant + r.nextGaussian() * 0.5;
+        double x = prior.x / MapView.getScaleConstant() + r.nextGaussian() * 0.5;
+        double y = prior.y / MapView.getScaleConstant() + r.nextGaussian() * 0.5;
 
-        for(Beacon b : beaconSet){
-            if(b != null) {
-                double d_new = Math.sqrt(Math.pow(b.getX() / scaleConstant - x, 2) + Math.pow(b.getY() / scaleConstant - y, 2));
-                double d_old = Math.sqrt(Math.pow((b.getX() - prior.x) / scaleConstant, 2) + Math.pow((b.getY() - prior.y) / scaleConstant, 2));
+        for (Beacon b : beaconSet) {
+            if (b != null) {
+                double d_new = Math.sqrt(Math.pow(b.getX() * MapView.width / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY() * MapView.height / MapView.getScaleConstant() - y, 2));
+                double d_old = Math.sqrt(Math.pow((b.getX() * MapView.width - prior.x) / MapView.getScaleConstant(), 2) + Math.pow((b.getY() * MapView.height - prior.y) / MapView.getScaleConstant(), 2));
+
                 double d = b.getAverageDistance();
 
                 // normal calculations
@@ -79,17 +77,15 @@ public class MathHelper {
         // logarithm-based calculations
         // Math.pow(10, pr_new - pr_old)
 
-        if ( a < Math.pow(10d, pr_new - pr_old)) {
-            prior.x = (int) (x * scaleConstant);
-            prior.y = (int) (y * scaleConstant);
+        if (a < Math.pow(10, pr_new - pr_old)) {
+            prior.x = (int) (x * MapView.getScaleConstant());
+            prior.y = (int) (y * MapView.getScaleConstant());
         }
-
         return prior;
     }
+    protected static List<Point> filterOut(Set<Beacon> beaconSet, List<Point> particleList ){
 
-    protected static List<Point> filterOut(Set<Beacon> beaconSet, List<Point> particleList) {
-
-        double scaleConstant = LocationActivity.getScaleConstant();
+        double scaleConstant = MapView.getScaleConstant();
         List<Point> filtered = new LinkedList<>();
         ArrayList<WeightedPoint> weights = new ArrayList<>();
 
@@ -100,15 +96,12 @@ public class MathHelper {
             double rho = r.nextDouble();
 
             // transform polar coordinates to euclidean coordinates
-
-            double x = p.x/scaleConstant + 0.3 * rho * Math.cos(theta);
-            double y = p.y/scaleConstant + 0.3 * rho * Math.sin(theta);
-
-            // calculate likelihood
+            double x = p.x/MapView.getScaleConstant() + 0.3 * rho * Math.cos(theta);
+            double y = p.y/MapView.getScaleConstant() + 0.3 * rho * Math.sin(theta);
 
             for(Beacon b : beaconSet) {
                 if(b != null) {
-                    double d_new = Math.sqrt(Math.pow(b.getX() / scaleConstant - x, 2) + Math.pow(b.getY() / scaleConstant - y, 2));
+                    double d_new = Math.sqrt(Math.pow(b.getX()* MapView.width / MapView.getScaleConstant() - x, 2) + Math.pow(b.getY()*MapView.height / MapView.getScaleConstant() - y, 2));
                     double d = b.getAverageDistance();
                     proposed_likelihood = proposed_likelihood * 2 * Z.cumulativeProbability(-Math.abs(d_new - d));
                 }

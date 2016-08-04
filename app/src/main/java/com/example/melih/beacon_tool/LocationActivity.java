@@ -18,7 +18,6 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
     private static List<Point> particles;
     private static MapView map;
     private static Set<Beacon> beaconSet = new HashSet<>();
-    private static double scaleConstant = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +28,10 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
         currentPoint = new Point();
         currentPoint.set(300,300);
         map = (MapView) findViewById(R.id.map);
-        // EGENİN TELEFONUNA GÖRE = 1360, ALPERİN TELEFONUNA GÖRE = 510, İGALİN NOTE 3 = 680, BİLGE = 1020
-        // bunu nasıl ayarlayacağımı bulamadım, getWidth() 0 döndürüyordu.
-        // level 11 = 31 metre
-        // thy = 106 metre
-        // car park = 100 metre
-        scaleConstant = 680 / 31;
+
 
         LeScanner.addListener(this);
+        startScan();
     }
 
     @Override
@@ -112,7 +107,5 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
 
     }
 
-    public static double getScaleConstant() {
-        return scaleConstant;
-    }
+
 }

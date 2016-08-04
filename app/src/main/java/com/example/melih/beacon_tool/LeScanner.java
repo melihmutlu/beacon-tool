@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -35,6 +34,8 @@ public class LeScanner extends AppCompatActivity{
     private static Set<String> validBeacons = new HashSet<>();
     private BluetoothAdapter adapter;
     public static Set<String> currentConfig = new HashSet<>();
+    public static ArrayList<String> nearThree = new ArrayList<>();
+    private static int mFloor = 0;
     public static ArrayList<String> chosenBeacons = new ArrayList<>();
 
     protected Beacon nearestBeacon;
@@ -60,20 +61,19 @@ public class LeScanner extends AppCompatActivity{
                             b = beaconList.get(device.getAddress());
                         } else {
                             b = new Beacon(device, scanRecord);
+                            beaconList.put(b.getAddress(), b);
                         }
                         b.addRssi(rssi);
-                        if(nearestBeacon == null){
-                            nearestBeacon = b;
-                        }else if(rssi > nearestBeacon.getRssi().peek()) {
-                            nearestBeacon = b;
+
+                        if(b.getFloor() == mFloor){
+                            currentConfig.add(b.getAddress());
                         }
-                        beaconList.put(nearestBeacon.getAddress(), nearestBeacon);
 
                         if(currentConfig.contains(b.getAddress())) {
 
                             if(chosenBeacons.size()<3 ) {
-                                b.clearRssiList();
-                                b.addRssi(rssi);
+//                                b.clearRssiList();
+//                                b.addRssi(rssi);
                                 beaconList.put(b.getAddress(), b);
                                 chosenBeacons.add(b.getAddress());
                             } else {
@@ -86,8 +86,8 @@ public class LeScanner extends AppCompatActivity{
                                 }
                                 if (b.getAverageDistance() < beaconList.get(max).getAverageDistance() && !chosenBeacons.contains(b.getAddress())){
                                     chosenBeacons.remove(chosenBeacons.indexOf(max));
-                                    b.clearRssiList();
-                                    b.addRssi(rssi);
+//                                    b.clearRssiList();
+//                                    b.addRssi(rssi);
                                     beaconList.put(b.getAddress(), b);
                                     chosenBeacons.add(b.getAddress());
                                 }
@@ -146,4 +146,5 @@ public class LeScanner extends AppCompatActivity{
     public static Set<String> getValidBeacons() {
         return validBeacons;
     }
+
 }
