@@ -96,8 +96,8 @@ public class MathHelper {
             double rho = r.nextDouble();
 
             // transform polar coordinates to euclidean coordinates
-            double x = p.x/MapView.getScaleConstant() + 0.5 * rho * Math.cos(theta);
-            double y = p.y/MapView.getScaleConstant() + 0.5 * rho * Math.sin(theta);
+            double x = p.x/MapView.getScaleConstant() + 0.3 * rho * Math.cos(theta);
+            double y = p.y/MapView.getScaleConstant() + 0.3 * rho * Math.sin(theta);
 
             for(Beacon b : beaconSet) {
                 if(b != null) {

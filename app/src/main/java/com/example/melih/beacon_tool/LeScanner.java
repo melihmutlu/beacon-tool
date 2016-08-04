@@ -35,7 +35,7 @@ public class LeScanner extends AppCompatActivity{
     private BluetoothAdapter adapter;
     public static Set<String> currentConfig = new HashSet<>();
     public static ArrayList<String> nearThree = new ArrayList<>();
-    private static int mFloor = 12;
+    private static int mFloor = 0;
     public static ArrayList<String> chosenBeacons = new ArrayList<>();
 
     protected Beacon nearestBeacon;
@@ -72,8 +72,8 @@ public class LeScanner extends AppCompatActivity{
                         if(currentConfig.contains(b.getAddress())) {
 
                             if(chosenBeacons.size()<3 ) {
-                                b.clearRssiList();
-                                b.addRssi(rssi);
+//                                b.clearRssiList();
+//                                b.addRssi(rssi);
                                 beaconList.put(b.getAddress(), b);
                                 chosenBeacons.add(b.getAddress());
                             } else {
@@ -86,8 +86,8 @@ public class LeScanner extends AppCompatActivity{
                                 }
                                 if (b.getAverageDistance() < beaconList.get(max).getAverageDistance() && !chosenBeacons.contains(b.getAddress())){
                                     chosenBeacons.remove(chosenBeacons.indexOf(max));
-                                    b.clearRssiList();
-                                    b.addRssi(rssi);
+//                                    b.clearRssiList();
+//                                    b.addRssi(rssi);
                                     beaconList.put(b.getAddress(), b);
                                     chosenBeacons.add(b.getAddress());
                                 }
