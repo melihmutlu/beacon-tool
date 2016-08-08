@@ -17,7 +17,7 @@ import java.util.Set;
 public class MathHelper {
 
     private static Random r = new Random();
-    public static NormalDistribution Z = new NormalDistribution(null,0, 1);
+    public static NormalDistribution Z = new NormalDistribution(null,0, 3);
 
     // return distance estimation with respect to
     // calibration value tx and measured rssi, with
