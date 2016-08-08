@@ -36,7 +36,7 @@ public class MathHelper {
         // 1 for normal calculations
         // 0 for logarithm-based calculations
 
-        double scaleConstant = MapView.getScaleConstant();
+       double scaleConstant = MapView.getScaleConstant();
         double pr_new = 0;
         double pr_old = 0;
 
