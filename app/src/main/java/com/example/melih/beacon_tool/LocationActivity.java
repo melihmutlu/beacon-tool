@@ -14,7 +14,7 @@ import java.util.Set;
 public class LocationActivity extends LeScanner implements BluetoothEventListener{
 
     private static final int NUMBER_OF_ROLLOUTS = 300;
-    private static long lastUpdateTime;
+    private static long lastUpdateTime = 0;
     private static Point currentPoint;
     private static List<Point> particles;
     private static MapView map;
@@ -50,7 +50,7 @@ public class LocationActivity extends LeScanner implements BluetoothEventListene
     @Override
     public void onUpdate(Beacon beacon) {
         long currentTime = System.currentTimeMillis();
-        if(currentTime -lastUpdateTime <= 500) {
+        if(currentTime - lastUpdateTime > 500) {
             lastUpdateTime = currentTime;
             updateBeaconSet();
 //          getEstimation();
