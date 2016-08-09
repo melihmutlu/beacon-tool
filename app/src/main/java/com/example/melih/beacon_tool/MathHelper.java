@@ -17,6 +17,8 @@ import java.util.Set;
 public class MathHelper {
 
     private static Random r = new Random();
+    private static double deltaX = 0;
+    private static double deltaY = 0;
     public static NormalDistribution Z = new NormalDistribution(null,0, 3);
 
     // return distance estimation with respect to
@@ -88,6 +90,7 @@ public class MathHelper {
         double scaleConstant = MapView.getScaleConstant();
         List<Point> filtered = new LinkedList<>();
         ArrayList<WeightedPoint> weights = new ArrayList<>();
+        ArrayList<WeightedDirection> direcs = new ArrayList<>();
 
         for(Point p : particleList) {
 
@@ -96,8 +99,11 @@ public class MathHelper {
             double rho = r.nextDouble();
 
             // transform polar coordinates to euclidean coordinates
-            double x = p.x/MapView.getScaleConstant() + 0.3 * rho * Math.cos(theta);
-            double y = p.y/MapView.getScaleConstant() + 0.3 * rho * Math.sin(theta);
+
+            double dx = 0.3 * rho * Math.cos(theta);
+            double dy = 0.3 * rho * Math.sin(theta);
+            double x = p.x/MapView.getScaleConstant() + dx;
+            double y = p.y/MapView.getScaleConstant() + dy;
 
             for(Beacon b : beaconSet) {
                 if(b != null) {
@@ -108,6 +114,7 @@ public class MathHelper {
             }
             Point m = new Point((int) (x * scaleConstant),(int) (y * scaleConstant));
             weights.add(new WeightedPoint(m, proposed_likelihood));
+            direcs.add(new WeightedDirection(dx, dy, proposed_likelihood));
         }
 
         weights = normaliseWeights(weights);

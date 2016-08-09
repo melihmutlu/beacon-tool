@@ -47,6 +47,8 @@ public class MapView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+        // initialization
         super.onDraw(canvas);
         scaleConstant = this.getWidth() / 31;
         width = getWidth();
@@ -56,26 +58,41 @@ public class MapView extends ImageView {
         mPaint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(0,0,getWidth(),getHeight(),mPaint);
         int a = 1;
+
+        // draw beacons and distance circles
         for (Beacon b : beaconList) {
             if (b != null) {
+                // beacon position
                 mPaint.setColor(Color.MAGENTA);
                 canvas.drawText("x: " + b.getX()*getWidth() + ", y: " + b.getY()*getHeight(), 30, 10 * a, mPaint);
                 a++;
+
+                // beacon circle
                 mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
                 mPaint.setColor(Color.CYAN);
                 canvas.drawCircle((float) b.getX()*getWidth(), (float) b.getY()*getHeight(), 10, mPaint);
 
+                // distance circle
                 mPaint.setStyle(Paint.Style.STROKE);
                 mPaint.setColor(Color.RED);
                 canvas.drawCircle((float) b.getX()*getWidth(), (float) b.getY()*getHeight(), (float) (b.getAverageDistance() * getScaleConstant()), mPaint);
             }
         }
+
+        // draw compass
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(Color.YELLOW);
+        mPaint.setAlpha(150);
+        canvas.drawRect(getWidth()-100,0,getWidth(),100,mPaint);
+
+        // draw point cloud
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.RED);
         mPaint.setAlpha(20);
         for (Point t : dots) {
             canvas.drawCircle((float) t.x, (float) t.y, 5, mPaint);
         }
+
     }
 
     public void setBeaconList(Set<Beacon> m) {
