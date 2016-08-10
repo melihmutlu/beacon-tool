@@ -34,19 +34,13 @@ public class LeScanner extends AppCompatActivity{
     private static Set<String> validBeacons = new HashSet<>();
     private BluetoothAdapter adapter;
     public static Set<String> currentConfig = new HashSet<>();
-    public static ArrayList<String> nearThree = new ArrayList<>();
-    private static int mFloor = 0;
+    private static int mFloor = 12;
     public static ArrayList<String> chosenBeacons = new ArrayList<>();
 
     protected Beacon nearestBeacon;
 
     protected void startScan(){
         beaconList = new HashMap<>();
-        // level 11 beacons
-        //currentConfig.add("D0:30:AD:84:07:40");
-        //currentConfig.add("E0:2E:E2:ED:86:64");
-        //currentConfig.add("FC:73:08:31:50:42");
-        //currentConfig.add("D6:31:D4:6D:42:DF");
 
         adapter = BluetoothAdapter.getDefaultAdapter();
         adapter.startLeScan(new BluetoothAdapter.LeScanCallback() {
@@ -72,13 +66,10 @@ public class LeScanner extends AppCompatActivity{
                         if(currentConfig.contains(b.getAddress())) {
 
                             if(chosenBeacons.size()<3 ) {
-//                                b.clearRssiList();
-//                                b.addRssi(rssi);
                                 beaconList.put(b.getAddress(), b);
                                 chosenBeacons.add(b.getAddress());
                             } else {
                                 String max = chosenBeacons.get(0);
-                                int index = 0;
                                 for (String s : chosenBeacons) {
                                     if (beaconList.get(s).getAverageDistance() > beaconList.get(max).getAverageDistance()) {
                                         max = s;
@@ -86,8 +77,6 @@ public class LeScanner extends AppCompatActivity{
                                 }
                                 if (b.getAverageDistance() < beaconList.get(max).getAverageDistance() && !chosenBeacons.contains(b.getAddress())){
                                     chosenBeacons.remove(chosenBeacons.indexOf(max));
-//                                    b.clearRssiList();
-//                                    b.addRssi(rssi);
                                     beaconList.put(b.getAddress(), b);
                                     chosenBeacons.add(b.getAddress());
                                 }
