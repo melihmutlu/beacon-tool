@@ -41,6 +41,7 @@ public class LeScanner extends AppCompatActivity{
 
     protected void startScan(){
         beaconList = new HashMap<>();
+
         adapter = BluetoothAdapter.getDefaultAdapter();
         adapter.startLeScan(new BluetoothAdapter.LeScanCallback() {
             @Override
