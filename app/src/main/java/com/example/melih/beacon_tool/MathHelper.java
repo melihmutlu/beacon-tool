@@ -17,7 +17,9 @@ import java.util.Set;
 public class MathHelper {
 
     private static Random r = new Random();
-    public static NormalDistribution Z = new NormalDistribution(null,0, 1);
+    private static double deltaX = 1;
+    private static double deltaY = 1;
+    public static NormalDistribution Z = new NormalDistribution(null,0, 2.5);
 
     // return distance estimation with respect to
     // calibration value tx and measured rssi, with
@@ -33,10 +35,7 @@ public class MathHelper {
     // with respect to prior point and beacon set.
     protected static Point mhRollout(Set<Beacon> beaconSet, Point prior) {
 
-        // 1 for normal calculations
-        // 0 for logarithm-based calculations
-
-       double scaleConstant = MapView.getScaleConstant();
+        double scaleConstant = MapView.getScaleConstant();
         double pr_new = 0;
         double pr_old = 0;
 
@@ -49,20 +48,6 @@ public class MathHelper {
                 double d_old = Math.sqrt(Math.pow((b.getX() * MapView.width - prior.x) / MapView.getScaleConstant(), 2) + Math.pow((b.getY() * MapView.height - prior.y) / MapView.getScaleConstant(), 2));
 
                 double d = b.getAverageDistance();
-
-                // normal calculations
-                //////////////////////
-//                pr_new = pr_new * Z.cumulativeProbability(d - d_new);
-//                pr_old = pr_old * Z.cumulativeProbability(d - d_old);
-
-//                double v = Math.log10(2*Z.cumulativeProbability(-Math.abs(d - d_new)));
-//                Log.d("INFO", "p: " + v);
-
-                // logarithm-based calculation
-                //////////////////////
-//                pr_new = pr_new + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_new)));
-//                pr_old = pr_old + Math.log10(2 * Z.cumulativeProbability(-Math.abs(d - d_old)));
-//
                 pr_new = pr_new + Math.log10(Z.cumulativeProbability(d - d_new));
                 pr_old = pr_old + Math.log10(Z.cumulativeProbability(d - d_old));
 
@@ -71,23 +56,21 @@ public class MathHelper {
 
         double a = r.nextDouble();
 
-        // normal calculations
-        // (pr_new / pr_old)
-        //////////////////////
-        // logarithm-based calculations
-        // Math.pow(10, pr_new - pr_old)
-
         if (a < Math.pow(10, pr_new - pr_old)) {
             prior.x = (int) (x * MapView.getScaleConstant());
             prior.y = (int) (y * MapView.getScaleConstant());
         }
         return prior;
     }
+
     protected static List<Point> filterOut(Set<Beacon> beaconSet, List<Point> particleList ){
 
         double scaleConstant = MapView.getScaleConstant();
         List<Point> filtered = new LinkedList<>();
         ArrayList<WeightedPoint> weights = new ArrayList<>();
+//        ArrayList<WeightedDirection> direcs = new ArrayList<>();
+        deltaX = 0;
+        deltaY = 0;
 
         for(Point p : particleList) {
 
@@ -96,8 +79,11 @@ public class MathHelper {
             double rho = r.nextDouble();
 
             // transform polar coordinates to euclidean coordinates
-            double x = p.x/MapView.getScaleConstant() + 0.3 * rho * Math.cos(theta);
-            double y = p.y/MapView.getScaleConstant() + 0.3 * rho * Math.sin(theta);
+
+            double dx = rho * Math.cos(theta);
+            double dy = rho * Math.sin(theta);
+            double x = p.x/MapView.getScaleConstant() + dx;
+            double y = p.y/MapView.getScaleConstant() + dy;
 
             for(Beacon b : beaconSet) {
                 if(b != null) {
@@ -108,6 +94,9 @@ public class MathHelper {
             }
             Point m = new Point((int) (x * scaleConstant),(int) (y * scaleConstant));
             weights.add(new WeightedPoint(m, proposed_likelihood));
+//            direcs.add(new WeightedDirection(dx, dy, proposed_likelihood));
+            deltaX = deltaX + dx * proposed_likelihood;
+            deltaY = deltaY + dy * proposed_likelihood;
         }
 
         weights = normaliseWeights(weights);
@@ -152,5 +141,13 @@ public class MathHelper {
         }
 
         return normalisedMap;
+    }
+
+    public static double getDeltaX() {
+        return deltaX;
+    }
+
+    public static double getDeltaY() {
+        return deltaY;
     }
 }
