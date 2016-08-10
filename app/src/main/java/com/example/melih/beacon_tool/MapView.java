@@ -82,8 +82,10 @@ public class MapView extends ImageView {
         // draw compass
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.YELLOW);
-        mPaint.setAlpha(150);
         canvas.drawRect(getWidth()-100,0,getWidth(),100,mPaint);
+        mPaint.setColor(Color.RED);
+        double theta = Math.atan(MathHelper.getDeltaY() / MathHelper.getDeltaX());
+        canvas.drawLine(getWidth()-50,50, getWidth() - 50 + 50 * (float) Math.cos(theta),50 + 50 * (float) Math.sin(theta),mPaint);
 
         // draw point cloud
         mPaint.setStyle(Paint.Style.FILL);

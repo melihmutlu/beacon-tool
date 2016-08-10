@@ -34,7 +34,6 @@ public class LeScanner extends AppCompatActivity{
     private static Set<String> validBeacons = new HashSet<>();
     private BluetoothAdapter adapter;
     public static Set<String> currentConfig = new HashSet<>();
-    public static ArrayList<String> nearThree = new ArrayList<>();
     private static int mFloor = 12;
     public static ArrayList<String> chosenBeacons = new ArrayList<>();
 
